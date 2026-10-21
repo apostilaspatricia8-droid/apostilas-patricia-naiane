@@ -118,6 +118,25 @@
         status.textContent = `Não foi possível cadastrar: ${error.message}`;
       }
     });
+
+  async function publishProduct(id, token) {
+    const response = await fetch(`${API}/api/admin/products/publish`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ id })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || `Erro HTTP ${response.status}`);
+    }
+
+    return result;
+  }
   </script>
 </body>
 </html>
