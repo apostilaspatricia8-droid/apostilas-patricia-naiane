@@ -158,3 +158,24 @@ select { height: 41px; border: 1px solid var(--line); border-radius: 8px; backgr
   .faq { display: block; }.faq-heading { margin-bottom: 20px; }
   .site-footer { padding-left: 18px; padding-right: 18px; }
 }
+/* Estado de carregamento e mensagens do catálogo */
+#product-grid > p {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  text-align: center;
+  padding: 28px 16px;
+}
+
+.product-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.product-card .cover-title {
+  overflow-wrap: anywhere;
+}
+
+[hidden] {
+  display: none !important;
+}
+
