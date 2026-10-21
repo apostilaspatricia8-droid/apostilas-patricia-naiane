@@ -39,6 +39,22 @@
 <body>
   <h1>Painel de apostilas</h1>
   
+<hr>
+<h2>Enviar PDF para uma apostila</h2>
+
+<label for="upload-id">ID da apostila</label>
+<input id="upload-id" placeholder="Cole o ID da apostila" required>
+
+<label for="upload-token">Token administrativo</label>
+<input id="upload-token" type="password"
+       autocomplete="off" placeholder="Seu token administrativo" required>
+
+<label for="upload-pdf">Arquivo PDF</label>
+<input id="upload-pdf" type="file" accept="application/pdf,.pdf" required>
+
+<button id="upload-button" type="button">Enviar PDF</button>
+<p id="upload-status" role="status"></p>
+  
   <hr>
   <h2>Publicar uma apostila cadastrada</h2>
   <p>Informe o ID recebido após cadastrar a apostila.</p>
@@ -173,6 +189,56 @@ document.querySelector("#publish-button").addEventListener("click", async () => 
     document.querySelector("#publish-token").value = "";
   } catch (error) {
     status.textContent = `Erro: ${error.message}`;
+  }
+});
+ 
+document.querySelector("#upload-button").addEventListener("click", async () => {
+  const id = document.querySelector("#upload-id").value.trim();
+  const token = document.querySelector("#upload-token").value;
+  const file = document.querySelector("#upload-pdf").files[0];
+  const status = document.querySelector("#upload-status");
+
+  if (!id || !token || !file) {
+    status.textContent = "Informe o ID, o token e selecione um PDF.";
+    return;
+  }
+
+  if (file.type !== "application/pdf" || !file.name.toLowerCase().endsWith(".pdf")) {
+    status.textContent = "Selecione um arquivo PDF válido.";
+    return;
+  }
+
+  if (file.size > 25 * 1024 * 1024) {
+    status.textContent = "O PDF deve ter no máximo 25 MB.";
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("id", id);
+  formData.append("pdf", file);
+
+  status.textContent = "Enviando PDF...";
+
+  try {
+    const response = await fetch(`${API}/api/admin/products/upload`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+      body: formData
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || `Erro HTTP ${response.status}`);
+    }
+
+    status.textContent = "PDF enviado e associado à apostila com sucesso!";
+    document.querySelector("#upload-token").value = "";
+    document.querySelector("#upload-pdf").value = "";
+  } catch (error) {
+    status.textContent = `Falha no envio: ${error.message}`;
   }
 });
   </script>
