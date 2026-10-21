@@ -38,6 +38,23 @@
 </head>
 <body>
   <h1>Painel de apostilas</h1>
+  
+  <hr>
+  <h2>Publicar uma apostila cadastrada</h2>
+  <p>Informe o ID recebido após cadastrar a apostila.</p>
+
+  <label for="publish-id">ID da apostila</label>
+  <input id="publish-id" placeholder="Cole aqui o ID da apostila">
+
+  <label for="publish-token">Token administrativo</label>
+  <input id="publish-token" type="password" autocomplete="off"
+         placeholder="Seu token administrativo">
+
+  <button id="publish-button" type="button">
+    Publicar apostila
+  </button>
+
+  <p id="publish-status" role="status"></p>
   <p class="aviso">
     Área administrativa. Não compartilhe seu token.
     O cadastro ficará como rascunho e ainda não aparecerá na loja.
@@ -137,6 +154,27 @@
 
     return result;
   }
+    
+document.querySelector("#publish-button").addEventListener("click", async () => {
+  const id = document.querySelector("#publish-id").value.trim();
+  const token = document.querySelector("#publish-token").value;
+  const status = document.querySelector("#publish-status");
+
+  if (!id || !token) {
+    status.textContent = "Informe o ID da apostila e o token.";
+    return;
+  }
+
+  status.textContent = "Publicando...";
+
+  try {
+    await publishProduct(id, token);
+    status.textContent = "Apostila publicada com sucesso!";
+    document.querySelector("#publish-token").value = "";
+  } catch (error) {
+    status.textContent = `Erro: ${error.message}`;
+  }
+});
   </script>
 </body>
 </html>
