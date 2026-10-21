@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel administrativo | Apostilas da Patrícia Naiane</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 680px;
+      margin: 40px auto;
+      padding: 20px;
+      color: #26352c;
+      background: #f7f5ed;
+    }
+    h1 { color: #24543b; }
+    label { display: block; margin-top: 16px; font-weight: bold; }
+    input, textarea, button {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      font: inherit;
+      border-radius: 6px;
+    }
+    input, textarea { border: 1px solid #bbb; background: white; }
+    button {
+      margin-top: 20px;
+      border: 0;
+      background: #24543b;
+      color: white;
+      cursor: pointer;
+    }
+    #status { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .aviso { color: #654c1d; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <h1>Painel de apostilas</h1>
+  <p class="aviso">
+    Área administrativa. Não compartilhe seu token.
+    O cadastro ficará como rascunho e ainda não aparecerá na loja.
+  </p>
+
+  <form id="product-form">
+    <label for="token">Token administrativo</label>
+    <input id="token" type="password" autocomplete="off" required>
+
+    <label for="title">Nome da apostila</label>
+    <input id="title" maxlength="180" required>
+
+    <label for="description">Descrição</label>
+    <textarea id="description" rows="4"></textarea>
+
+    <label for="price">Preço em reais (ex.: 19,90)</label>
+    <input id="price" inputmode="decimal" placeholder="19,90" required>
+
+    <label for="cover">Link HTTPS da capa (opcional)</label>
+    <input id="cover" type="url" placeholder="https://...">
+
+    <button type="submit">Cadastrar rascunho</button>
+  </form>
+
+  <p id="status" role="status"></p>
+
+  <script>
+    const API = "https://apostilas-patricia-api.apostilaspatricia8.workers.dev";
+    const form = document.querySelector("#product-form");
+    const status = document.querySelector("#status");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      status.textContent = "Cadastrando...";
+
+      const token = document.querySelector("#token").value;
+      const title = document.querySelector("#title").value.trim();
+      const description = document.querySelector("#description").value.trim();
+      const priceText = document.querySelector("#price").value.trim();
+      const cover = document.querySelector("#cover").value.trim();
+      const normalizedPrice = priceText.replace(",", ".");
+      const price = Number(normalizedPrice);
+
+      if (!Number.isFinite(price) || price < 0 || !/^\d+(\.\d{1,2})?$/.test(normalizedPrice)) {
+        status.textContent = "Digite um preço válido, como 19,90.";
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API}/api/admin/products`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            title,
+            description,
+            price_cents: Math.round(price * 100),
+            cover_url: cover || null
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            response.status === 401
+              ? "Token inválido ou não configurado."
+              : result.error || `Erro HTTP ${response.status}`
+          );
+        }
+
+        status.textContent =
+          `Rascunho cadastrado!\nID: ${result.id}\nAinda não está publicado na loja.`;
+        form.reset();
+      } catch (error) {
+        status.textContent = `Não foi possível cadastrar: ${error.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
