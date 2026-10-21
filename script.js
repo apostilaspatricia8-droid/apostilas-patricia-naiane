@@ -1,81 +1,149 @@
-// Catálogo demonstrativo. Substitua os exemplos por produtos reais antes do lançamento.
-const products = [
-  {
-    id: "exemplo-concursos",
-    title: "Guia de preparação para concursos",
-    category: "concursos",
-    categoryLabel: "Concursos",
-    description: "Um exemplo de página de produto para materiais de preparação.",
-    coverTitle: "Preparação para concursos",
-    coverClass: "cover-green",
-    price: "R$ 29,90"
-  },
-  {
-    id: "exemplo-organizacao",
-    title: "Planner de estudos",
-    category: "organizacao",
-    categoryLabel: "Organização",
-    description: "Modelo demonstrativo para organizar metas e rotina de estudos.",
-    coverTitle: "Organize seus estudos",
-    coverClass: "cover-clay",
-    price: "R$ 14,90"
-  },
-  {
-    id: "exemplo-revisao",
-    title: "Caderno de revisão",
-    category: "revisao",
-    categoryLabel: "Revisão",
-    description: "Exemplo de material para revisão e acompanhamento do conteúdo.",
-    coverTitle: "Revise com foco",
-    coverClass: "cover-blue",
-    price: "R$ 19,90"
-  }
-];
+const API_URL =
+  "https://apostilas-patricia-api.apostilaspatricia8.workers.dev";
 
 const grid = document.querySelector("#product-grid");
 const searchInput = document.querySelector("#search");
 const categorySelect = document.querySelector("#category");
 const emptyState = document.querySelector("#empty-state");
+const demoNotice = document.querySelector(".demo-notice");
+
+let products = [];
+
+function formatPrice(cents) {
+  return (cents / 100).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
+}
+
+function createElement(tag, className, text) {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  if (text !== undefined) element.textContent = text;
+  return element;
+}
 
 function renderProducts() {
   const term = searchInput.value.trim().toLocaleLowerCase("pt-BR");
   const category = categorySelect.value;
+
   const filtered = products.filter(product => {
-    const matchesText = `${product.title} ${product.description} ${product.categoryLabel}`
-      .toLocaleLowerCase("pt-BR").includes(term);
-    return matchesText && (category === "todas" || product.category === category);
+    const text = [
+      product.title,
+      product.description
+    ].join(" ").toLocaleLowerCase("pt-BR");
+
+    const matchesText = text.includes(term);
+    const matchesCategory =
+      category === "todas" ||
+      product.category === category;
+
+    return matchesText && matchesCategory;
   });
 
-  grid.innerHTML = filtered.map(product => `
-    <article class="product-card">
-      <div class="product-cover ${product.coverClass}">
-        <span class="cover-label">APOSTILAS DA PATRÍCIA NAIANE</span>
-        <span class="cover-title">${product.coverTitle}</span>
-        <span class="cover-footer">MATERIAL DEMONSTRATIVO • PDF</span>
-      </div>
-      <div class="product-info">
-        <span class="product-category">${product.categoryLabel}</span>
-        <h3>${product.title}</h3>
-        <p>${product.description}</p>
-        <div class="product-bottom">
-          <span class="price">${product.price}</span>
-          <button class="product-button" type="button" data-product="${product.id}">Em breve</button>
-        </div>
-      </div>
-    </article>
-  `).join("");
+  grid.replaceChildren();
+
+  filtered.forEach(product => {
+    const card = createElement("article", "product-card");
+
+    const cover = createElement(
+      "div",
+      "product-cover cover-green"
+    );
+
+    cover.append(
+      createElement(
+        "span",
+        "cover-label",
+        "APOSTILAS DA PATRÍCIA NAIANE"
+      ),
+      createElement("span", "cover-title", product.title),
+      createElement("span", "cover-footer", "MATERIAL DIGITAL • PDF")
+    );
+
+    const info = createElement("div", "product-info");
+
+    info.append(
+      createElement("span", "product-category", "Apostila digital"),
+      createElement("h3", "", product.title),
+      createElement("p", "", product.description || "Material digital de estudo.")
+    );
+
+    const bottom = createElement("div", "product-bottom");
+    bottom.append(
+      createElement("span", "price", formatPrice(product.price_cents))
+    );
+
+    const button = createElement(
+      "button",
+      "product-button",
+      "Em breve"
+    );
+    button.type = "button";
+    button.disabled = true;
+    button.setAttribute("aria-label", "Compra ainda não disponível");
+
+    bottom.append(button);
+    info.append(bottom);
+    card.append(cover, info);
+    grid.append(card);
+  });
 
   emptyState.hidden = filtered.length > 0;
+
+  if (filtered.length === 0) {
+    emptyState.textContent = products.length
+      ? "Nenhuma apostila encontrada. Tente outro termo."
+      : "Ainda não há apostilas publicadas. Volte em breve!";
+  }
+}
+
+async function loadProducts() {
+  grid.replaceChildren(
+    createElement("p", "", "Carregando apostilas...")
+  );
+
+  try {
+    const response = await fetch(`${API_URL}/api/products`, {
+      headers: { Accept: "application/json" }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!Array.isArray(data.products)) {
+      throw new Error("Resposta inválida da API");
+    }
+
+    products = data.products.filter(product =>
+      typeof product.id === "string" &&
+      typeof product.title === "string" &&
+      Number.isSafeInteger(product.price_cents) &&
+      product.price_cents >= 0
+    );
+
+    if (demoNotice) {
+      demoNotice.hidden = true;
+    }
+
+    renderProducts();
+  } catch (error) {
+    console.error("Falha ao carregar apostilas:", error);
+    grid.replaceChildren();
+
+    emptyState.hidden = false;
+    emptyState.textContent =
+      "Não foi possível carregar as apostilas agora. Tente novamente mais tarde.";
+  }
 }
 
 searchInput.addEventListener("input", renderProducts);
 categorySelect.addEventListener("change", renderProducts);
 
-grid.addEventListener("click", event => {
-  const button = event.target.closest("[data-product]");
-  if (!button) return;
-  alert("Esta é uma prévia do site. O checkout será ativado depois da integração segura com o meio de pagamento.");
-});
+document.querySelector("#year").textContent =
+  new Date().getFullYear();
 
-document.querySelector("#year").textContent = new Date().getFullYear();
-renderProducts();
+loadProducts();
