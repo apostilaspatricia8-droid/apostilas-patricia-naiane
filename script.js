@@ -14,22 +14,6 @@ function formatPrice(cents) {
   });
 }
 
-function normalizeCpf(value) {
-  return String(value ?? "").replace(/\D/g, "");
-}
-
-function isValidCpf(value) {
-  const cpf = normalizeCpf(value);
-  if (!/^\d{11}$/.test(cpf) || /^(\d)\1{10}$/.test(cpf)) return false;
-  const digit = length => {
-    let sum = 0;
-    for (let i = 0; i < length; i++) sum += Number(cpf[i]) * (length + 1 - i);
-    const remainder = (sum * 10) % 11;
-    return remainder === 10 ? 0 : remainder;
-  };
-  return digit(9) === Number(cpf[9]) && digit(10) === Number(cpf[10]);
-}
-
 function createElement(tag, className, text) {
   const element = document.createElement(tag);
   if (className) element.className = className;
@@ -98,43 +82,19 @@ function openPurchaseForm(product) {
   emailInput.placeholder = "voce@exemplo.com";
   emailLabel.append(emailInput);
 
-  const cpfLabel = createElement("label", "", "CPF do pagador");
-  const cpfInput = createElement("input");
-  cpfInput.type = "text";
-  cpfInput.name = "payer_cpf";
-  cpfInput.inputMode = "numeric";
-  cpfInput.autocomplete = "off";
-  cpfInput.required = true;
-  cpfInput.maxLength = 14;
-  cpfInput.placeholder = "000.000.000-00";
-  cpfInput.addEventListener("input", () => {
-    const digits = normalizeCpf(cpfInput.value).slice(0, 11);
-    cpfInput.value = digits.length <= 3 ? digits
-      : digits.length <= 6 ? `${digits.slice(0, 3)}.${digits.slice(3)}`
-      : digits.length <= 9 ? `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`
-      : `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
-  });
-  cpfLabel.append(cpfInput);
-
   const submit = createElement("button", "product-button", "Continuar para o Pix");
   submit.type = "submit";
   const cancel = createElement("button", "text-link", "Cancelar");
   cancel.type = "button";
   cancel.addEventListener("click", () => form.remove());
-  const note = createElement("p", "", "Você receberá as instruções do Pix depois que o pedido for registrado. Seu CPF será enviado ao Mercado Pago para processar o pagamento e não será salvo no banco de pedidos da loja.");
-  form.append(heading, description, nameLabel, emailLabel, cpfLabel, submit, cancel, note);
+  const note = createElement("p", "", "Após registrar o pedido, a loja mostrará a chave Pix e o valor exato. O pagamento será confirmado manualmente depois que a Patrícia conferir o crédito no banco.");
+  form.append(heading, description, nameLabel, emailLabel, submit, cancel, note);
   grid.before(form);
   form.scrollIntoView({ behavior: "smooth", block: "center" });
   nameInput.focus();
 
   form.addEventListener("submit", async event => {
     event.preventDefault();
-    const cpf = normalizeCpf(cpfInput.value);
-    if (!isValidCpf(cpf)) {
-      showMessage("Informe um CPF válido para gerar o Pix.", true);
-      cpfInput.focus();
-      return;
-    }
     setButtonBusy(submit, true, "Registrando pedido...");
     try {
       const response = await fetch(`${API_URL}/api/orders`, {
@@ -160,7 +120,7 @@ function openPurchaseForm(product) {
       const paymentArea = createElement("div", "payment-area");
       paymentArea.id = "payment-area";
       form.append(paymentArea);
-      await createPixPayment(data.order_id, data.access_token, product.id, paymentArea, cpf);
+      await createPixPayment(data.order_id, data.access_token, product.id, paymentArea);
     } catch (error) {
       console.error("Erro ao registrar pedido:", error);
       showMessage(error.message || "Não foi possível criar o pedido. Tente novamente.", true);
@@ -169,88 +129,100 @@ function openPurchaseForm(product) {
   });
 }
 
-async function createPixPayment(orderId, accessToken, productId, target, cpf) {
-  target.replaceChildren(createElement("p", "", "Solicitando pagamento Pix seguro..."));
+async function createPixPayment(orderId, accessToken, productId, target) {
+  target.replaceChildren(createElement("p", "", "Carregando as instruções do Pix..."));
   try {
     const response = await fetch(`${API_URL}/api/payments/pix`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ order_id: orderId, access_token: accessToken, cpf })
+      body: JSON.stringify({ order_id: orderId, access_token: accessToken })
     });
     const data = await response.json();
 
-    if (response.status === 503 && data.code === "PAYMENTS_NOT_CONFIGURED") {
+    if (response.status === 503 && data.code === "PIX_NOT_CONFIGURED") {
       target.replaceChildren(
-        createElement("h4", "", "Pagamento Pix ainda não configurado"),
-        createElement("p", "", "Seu pedido foi registrado, mas ainda não é possível pagar por esta página. Não faça transferência manual. Tente novamente quando o pagamento for ativado.")
+        createElement("h4", "", "Pix ainda não configurado"),
+        createElement("p", "", data.message || "A loja ainda não configurou a chave Pix. Não faça transferência até os dados aparecerem aqui.")
       );
-      target.append(makeActionButton("Tentar gerar Pix novamente", async button => {
-        setButtonBusy(button, true, "Tentando...");
-        await createPixPayment(orderId, accessToken, productId, target, cpf);
+      target.append(makeActionButton("Tentar novamente", async button => {
+        setButtonBusy(button, true, "Consultando...");
+        await createPixPayment(orderId, accessToken, productId, target);
       }));
-      target.append(makeActionButton("Consultar pedido", button => consultarPedido(orderId, target)));
+      target.append(makeActionButton("Consultar pedido", () => consultarPedido(orderId, target)));
       return;
     }
     if (!response.ok || !data.ok) throw new Error(data.error || `Erro HTTP ${response.status}`);
 
-    target.replaceChildren();
-    if (data.status === "approved" || data.status === "paid") {
+    if (data.status === "paid") {
+      target.replaceChildren();
       await renderStatusAndDownload(orderId, accessToken, productId, target, {
-        status: "paid", total_cents: null, order_id: orderId
+        status: "paid", total_cents: data.total_cents, order_id: orderId
       });
       return;
     }
+
+    target.replaceChildren();
     target.append(createElement("h4", "", "Pague com Pix"));
-    target.append(createElement("p", "", "Abra o aplicativo do seu banco, escaneie o QR Code ou copie o código Pix abaixo."));
-    if (data.qr_code_base64) {
-      const image = document.createElement("img");
-      image.alt = "QR Code para pagamento Pix";
-      image.className = "pix-qr";
-      image.src = data.qr_code_base64.startsWith("data:image/")
-        ? data.qr_code_base64
-        : `data:image/png;base64,${data.qr_code_base64}`;
-      target.append(image);
-    }
-    if (data.qr_code) {
-      const codeLabel = createElement("label", "", "Código Pix copia e cola");
-      const code = document.createElement("textarea");
-      code.readOnly = true;
-      code.rows = 4;
-      code.value = data.qr_code;
-      codeLabel.append(code);
-      target.append(codeLabel);
-      target.append(makeActionButton("Copiar código Pix", async button => {
-        try {
-          await navigator.clipboard.writeText(data.qr_code);
-          button.textContent = "Código copiado!";
-        } catch {
-          code.focus(); code.select();
-          button.textContent = "Código selecionado — copie manualmente";
-        }
-      }));
-    }
-    if (data.ticket_url) {
-      const ticket = createElement("a", "text-link", "Abrir instruções do pagamento");
-      ticket.href = data.ticket_url;
-      ticket.target = "_blank";
-      ticket.rel = "noopener noreferrer";
-      target.append(ticket);
-    }
-    target.append(createElement("p", "", "Depois de pagar, clique em “Verificar pagamento”. A liberação depende da confirmação recebida e validada pelo servidor."));
-    target.append(makeActionButton("Verificar pagamento", button => consultarPedido(orderId, target)));
-    if (!data.qr_code && !data.qr_code_base64 && !data.ticket_url) {
-      target.append(createElement("p", "", "O Mercado Pago não devolveu o QR Code nesta resposta. Tente atualizar o pagamento mais tarde."));
-    }
+    target.append(createElement("p", "", "Confira os dados abaixo e transfira o valor exato usando o aplicativo do seu banco."));
+
+    const detail = (label, value) => {
+      const wrapper = createElement("div", "pix-detail");
+      wrapper.append(createElement("strong", "", label));
+      wrapper.append(createElement("p", "", value));
+      return wrapper;
+    };
+    target.append(detail("Valor exato", formatPrice(data.total_cents)));
+    target.append(detail("Banco recebedor", data.pix_bank || "Banco informado pela loja"));
+    target.append(detail("Titular", data.pix_holder));
+    target.append(detail(`Chave Pix (${String(data.pix_key_type || "").toUpperCase()})`, data.pix_key));
+
+    const keyLabel = createElement("label", "", "Chave Pix para copiar e colar");
+    const keyInput = document.createElement("textarea");
+    keyInput.readOnly = true;
+    keyInput.rows = 2;
+    keyInput.value = data.pix_key;
+    keyLabel.append(keyInput);
+    target.append(keyLabel);
+    target.append(makeActionButton("Copiar chave Pix", async button => {
+      try {
+        await navigator.clipboard.writeText(data.pix_key);
+        button.textContent = "Chave copiada!";
+      } catch {
+        keyInput.focus(); keyInput.select();
+        button.textContent = "Chave selecionada — copie manualmente";
+      }
+    }));
+
+    const orderLabel = createElement("label", "", "Número do pedido (coloque na descrição, se seu banco permitir)");
+    const orderInput = document.createElement("textarea");
+    orderInput.readOnly = true;
+    orderInput.rows = 2;
+    orderInput.value = orderId;
+    orderLabel.append(orderInput);
+    target.append(orderLabel);
+    target.append(makeActionButton("Copiar número do pedido", async button => {
+      try {
+        await navigator.clipboard.writeText(orderId);
+        button.textContent = "Número copiado!";
+      } catch {
+        orderInput.focus(); orderInput.select();
+        button.textContent = "Número selecionado — copie manualmente";
+      }
+    }));
+
+    target.append(createElement("p", "", data.pix_instructions || "Após pagar, aguarde a Patrícia conferir o crédito no banco. Não envie comprovante como única prova de pagamento."));
+    target.append(createElement("p", "", "A confirmação é manual. O PDF só será liberado depois que a loja verificar o recebimento real no extrato bancário."));
+    target.append(makeActionButton("Consultar status do pedido", () => consultarPedido(orderId, target)));
   } catch (error) {
     target.replaceChildren(
-      createElement("p", "", `O pedido foi registrado, mas não conseguimos carregar o Pix: ${error.message || "erro desconhecido"}.`),
-      createElement("p", "", "Você pode tentar novamente sem criar outro pedido.")
+      createElement("p", "", `O pedido foi registrado, mas não conseguimos carregar as instruções: ${error.message || "erro desconhecido"}.`),
+      createElement("p", "", "Tente novamente sem criar outro pedido.")
     );
     target.append(makeActionButton("Tentar novamente", async button => {
       setButtonBusy(button, true, "Tentando...");
-      await createPixPayment(orderId, accessToken, productId, target, cpf);
+      await createPixPayment(orderId, accessToken, productId, target);
     }));
-    target.append(makeActionButton("Consultar pedido", button => consultarPedido(orderId, target)));
+    target.append(makeActionButton("Consultar pedido", () => consultarPedido(orderId, target)));
   }
 }
 
@@ -301,7 +273,7 @@ async function renderStatusAndDownload(orderId, accessToken, productId, target, 
     target.append(createElement("p", "", "Seu pagamento foi confirmado pelo servidor. Agora você pode baixar a apostila."));
     target.append(makeActionButton("Baixar apostila em PDF", button => downloadProduct(orderId, accessToken, productId, button)));
   } else {
-    target.append(createElement("p", "", "Assim que o Mercado Pago confirmar o pagamento, esta página permitirá consultar o status novamente."));
+    target.append(createElement("p", "", "Assim que a Patrícia conferir o recebimento no banco e confirmar o pedido, esta página permitirá consultar o status novamente."));
     target.append(makeActionButton("Verificar novamente", button => consultarPedido(orderId, target)));
   }
 }
