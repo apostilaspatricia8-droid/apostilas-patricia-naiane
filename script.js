@@ -260,3 +260,49 @@ categorySelect.addEventListener("change", renderProducts);
 document.querySelector("#year").textContent = new Date().getFullYear();
 
 loadProducts();
+
+async function consultarPedido(orderId) {
+  let credentials;
+
+  try {
+    credentials = JSON.parse(
+      sessionStorage.getItem(`order:${orderId}`) || "null"
+    );
+  } catch {
+    credentials = null;
+  }
+
+  if (!credentials?.access_token) {
+    alert("Não encontramos o acesso a este pedido neste navegador.");
+    return;
+  }
+
+  try {
+    const url = new URL(`${API_URL}/api/orders/status`);
+    url.searchParams.set("id", orderId);
+    url.searchParams.set("token", credentials.access_token);
+
+    const response = await fetch(url, {
+      headers: { Accept: "application/json" }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Não foi possível consultar o pedido.");
+    }
+
+    const statusLabels = {
+      pending: "Aguardando pagamento",
+      paid: "Pagamento confirmado"
+    };
+
+    alert(
+      `Pedido: ${data.order_id}\n` +
+      `Status: ${statusLabels[data.status] || data.status}\n` +
+      `Valor: ${formatPrice(data.total_cents)}`
+    );
+  } catch (error) {
+    alert(error.message || "Erro ao consultar o pedido.");
+  }
+}
