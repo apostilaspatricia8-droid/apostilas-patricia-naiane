@@ -14,6 +14,22 @@ function formatPrice(cents) {
   });
 }
 
+function normalizeCpf(value) {
+  return String(value ?? "").replace(/\D/g, "");
+}
+
+function isValidCpf(value) {
+  const cpf = normalizeCpf(value);
+  if (!/^\d{11}$/.test(cpf) || /^(\d)\1{10}$/.test(cpf)) return false;
+  const digit = length => {
+    let sum = 0;
+    for (let i = 0; i < length; i++) sum += Number(cpf[i]) * (length + 1 - i);
+    const remainder = (sum * 10) % 11;
+    return remainder === 10 ? 0 : remainder;
+  };
+  return digit(9) === Number(cpf[9]) && digit(10) === Number(cpf[10]);
+}
+
 function createElement(tag, className, text) {
   const element = document.createElement(tag);
   if (className) element.className = className;
@@ -82,19 +98,43 @@ function openPurchaseForm(product) {
   emailInput.placeholder = "voce@exemplo.com";
   emailLabel.append(emailInput);
 
+  const cpfLabel = createElement("label", "", "CPF do pagador");
+  const cpfInput = createElement("input");
+  cpfInput.type = "text";
+  cpfInput.name = "payer_cpf";
+  cpfInput.inputMode = "numeric";
+  cpfInput.autocomplete = "off";
+  cpfInput.required = true;
+  cpfInput.maxLength = 14;
+  cpfInput.placeholder = "000.000.000-00";
+  cpfInput.addEventListener("input", () => {
+    const digits = normalizeCpf(cpfInput.value).slice(0, 11);
+    cpfInput.value = digits.length <= 3 ? digits
+      : digits.length <= 6 ? `${digits.slice(0, 3)}.${digits.slice(3)}`
+      : digits.length <= 9 ? `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`
+      : `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+  });
+  cpfLabel.append(cpfInput);
+
   const submit = createElement("button", "product-button", "Continuar para o Pix");
   submit.type = "submit";
   const cancel = createElement("button", "text-link", "Cancelar");
   cancel.type = "button";
   cancel.addEventListener("click", () => form.remove());
-  const note = createElement("p", "", "Você receberá as instruções do Pix depois que o pedido for registrado.");
-  form.append(heading, description, nameLabel, emailLabel, submit, cancel, note);
+  const note = createElement("p", "", "Você receberá as instruções do Pix depois que o pedido for registrado. Seu CPF será enviado ao Mercado Pago para processar o pagamento e não será salvo no banco de pedidos da loja.");
+  form.append(heading, description, nameLabel, emailLabel, cpfLabel, submit, cancel, note);
   grid.before(form);
   form.scrollIntoView({ behavior: "smooth", block: "center" });
   nameInput.focus();
 
   form.addEventListener("submit", async event => {
     event.preventDefault();
+    const cpf = normalizeCpf(cpfInput.value);
+    if (!isValidCpf(cpf)) {
+      showMessage("Informe um CPF válido para gerar o Pix.", true);
+      cpfInput.focus();
+      return;
+    }
     setButtonBusy(submit, true, "Registrando pedido...");
     try {
       const response = await fetch(`${API_URL}/api/orders`, {
@@ -120,7 +160,7 @@ function openPurchaseForm(product) {
       const paymentArea = createElement("div", "payment-area");
       paymentArea.id = "payment-area";
       form.append(paymentArea);
-      await createPixPayment(data.order_id, data.access_token, product.id, paymentArea);
+      await createPixPayment(data.order_id, data.access_token, product.id, paymentArea, cpf);
     } catch (error) {
       console.error("Erro ao registrar pedido:", error);
       showMessage(error.message || "Não foi possível criar o pedido. Tente novamente.", true);
@@ -129,13 +169,13 @@ function openPurchaseForm(product) {
   });
 }
 
-async function createPixPayment(orderId, accessToken, productId, target) {
+async function createPixPayment(orderId, accessToken, productId, target, cpf) {
   target.replaceChildren(createElement("p", "", "Solicitando pagamento Pix seguro..."));
   try {
     const response = await fetch(`${API_URL}/api/payments/pix`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ order_id: orderId, access_token: accessToken })
+      body: JSON.stringify({ order_id: orderId, access_token: accessToken, cpf })
     });
     const data = await response.json();
 
@@ -146,7 +186,7 @@ async function createPixPayment(orderId, accessToken, productId, target) {
       );
       target.append(makeActionButton("Tentar gerar Pix novamente", async button => {
         setButtonBusy(button, true, "Tentando...");
-        await createPixPayment(orderId, accessToken, productId, target);
+        await createPixPayment(orderId, accessToken, productId, target, cpf);
       }));
       target.append(makeActionButton("Consultar pedido", button => consultarPedido(orderId, target)));
       return;
@@ -208,7 +248,7 @@ async function createPixPayment(orderId, accessToken, productId, target) {
     );
     target.append(makeActionButton("Tentar novamente", async button => {
       setButtonBusy(button, true, "Tentando...");
-      await createPixPayment(orderId, accessToken, productId, target);
+      await createPixPayment(orderId, accessToken, productId, target, cpf);
     }));
     target.append(makeActionButton("Consultar pedido", button => consultarPedido(orderId, target)));
   }
