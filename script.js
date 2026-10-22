@@ -149,7 +149,7 @@ function openPurchaseForm(product, button) {
         }
       }
 
-      showMessage("Pedido registrado sem cobrança. O pagamento ainda não está disponível.");
+      
     } catch (error) {
       console.error("Erro ao criar pedido:", error);
       showMessage(
