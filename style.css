@@ -295,3 +295,14 @@ select { height: 41px; border: 1px solid var(--line); border-radius: 8px; backgr
   overflow-wrap: anywhere;
 }
 .purchase-form .payment-area button { width: 100%; min-height: 44px; }
+
+/* Instruções do Pix manual */
+.payment-area .pix-detail {
+  border: 1px solid var(--border, #d9e2da);
+  border-radius: 10px;
+  padding: 11px 13px;
+  background: #fff;
+}
+.payment-area .pix-detail strong { display: block; font-size: .82rem; color: #617067; margin-bottom: 3px; }
+.payment-area .pix-detail p { font-size: 1rem; font-weight: 700; overflow-wrap: anywhere; }
+.payment-area .pix-qr { max-width: 240px; width: 100%; height: auto; }
