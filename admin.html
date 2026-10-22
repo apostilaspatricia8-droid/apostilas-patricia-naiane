@@ -1,246 +1,312 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
   <title>Painel administrativo | Apostilas da Patrícia Naiane</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 680px;
-      margin: 40px auto;
-      padding: 20px;
-      color: #26352c;
-      background: #f7f5ed;
-    }
-    h1 { color: #24543b; }
-    label { display: block; margin-top: 16px; font-weight: bold; }
-    input, textarea, button {
-      box-sizing: border-box;
-      width: 100%;
-      padding: 12px;
-      margin-top: 6px;
-      font: inherit;
-      border-radius: 6px;
-    }
-    input, textarea { border: 1px solid #bbb; background: white; }
-    button {
-      margin-top: 20px;
-      border: 0;
-      background: #24543b;
-      color: white;
-      cursor: pointer;
-    }
-    #status { white-space: pre-wrap; overflow-wrap: anywhere; }
-    .aviso { color: #654c1d; line-height: 1.5; }
+    :root{color-scheme:light;--green:#20543f;--green-dark:#143b2c;--mint:#e7f2e9;--cream:#f6f5ee;--ink:#21332a;--muted:#68756d;--line:#dce3dc;--white:#fff;--red:#a52d35;--amber:#8b6418;--shadow:0 12px 32px rgba(25,55,39,.07)}
+    *{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    header{background:linear-gradient(120deg,var(--green-dark),var(--green));color:white;padding:28px 20px 32px}
+    .wrap{width:min(1120px,100% - 32px);margin:auto}.brand-row{display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{display:flex;gap:14px;align-items:center}.brand-mark{width:48px;height:48px;display:grid;place-items:center;background:#ffffff1b;border:1px solid #ffffff35;border-radius:15px;font-size:25px}.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.78;font-weight:700}h1{font-size:clamp(25px,4vw,36px);line-height:1.1;margin:5px 0 0}header p{margin:14px 0 0;color:#e1ece3;max-width:650px}
+    main{padding:24px 0 56px}.notice{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid #eadcae;background:#fff8df;border-radius:14px;color:#674f15;margin-bottom:20px}.notice strong{display:block}.notice span{font-size:14px}
+    .auth-card,.panel,.stat{background:var(--white);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.auth-card{padding:18px;margin-bottom:20px}.auth-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:end}.field{min-width:0}.field label{display:block;font-size:13px;font-weight:750;margin-bottom:7px;color:#3d5145}input,textarea,select{width:100%;font:inherit;color:var(--ink);border:1px solid #cbd6cc;border-radius:10px;padding:11px 12px;background:white;min-width:0}input:focus,textarea:focus,select:focus{outline:3px solid #c7e4cf;border-color:var(--green)}input[type=file]{font-size:13px;padding:8px}textarea{resize:vertical}
+    button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:11px 14px;cursor:pointer;transition:transform .12s,background .12s;white-space:normal}button:hover{transform:translateY(-1px)}button:disabled{opacity:.55;cursor:not-allowed;transform:none}.btn-primary{background:var(--green);color:#fff}.btn-primary:hover{background:var(--green-dark)}.btn-secondary{background:#edf3ee;color:#244b36;border:1px solid #d5e3d8}.btn-danger{background:#fff0f0;color:var(--red);border:1px solid #f2d0d2}.btn-small{font-size:13px;padding:8px 10px}.button-row{display:flex;gap:8px;flex-wrap:wrap}.helper{font-size:13px;color:var(--muted);margin:8px 0 0}.status{font-size:14px;margin:10px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}.status.error{color:var(--red)}.status.ok{color:var(--green)}
+    .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px}.stat{padding:16px 18px}.stat span{display:block;color:var(--muted);font-size:13px}.stat strong{display:block;font-size:27px;line-height:1.25;margin-top:3px;color:var(--green-dark)}
+    .layout{display:grid;grid-template-columns:minmax(280px, .78fr) minmax(0,1.35fr);gap:20px;align-items:start}.panel{padding:20px}.panel h2{font-size:20px;line-height:1.2;margin:0 0 6px;color:var(--green-dark)}.panel-intro{color:var(--muted);font-size:14px;margin:0 0 18px}.form-grid{display:grid;gap:14px}.form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}.hidden{display:none!important}
+    .list-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:16px}.list-head .panel-intro{margin-bottom:0}.filters{display:grid;grid-template-columns:minmax(0,1fr) 170px;gap:10px;margin-bottom:14px}.products{display:grid;gap:12px}.product{border:1px solid var(--line);border-radius:14px;padding:15px;background:#fff}.product-top{display:flex;gap:13px;align-items:flex-start}.cover{width:60px;height:76px;border-radius:9px;background:linear-gradient(155deg,#2f7953,#17412e);color:white;display:grid;place-items:center;flex:0 0 60px;overflow:hidden}.cover img{width:100%;height:100%;object-fit:cover}.cover span{font-size:21px;font-weight:800}.product-main{min-width:0;flex:1}.product-title{font-weight:800;line-height:1.25;overflow-wrap:anywhere}.product-meta{font-size:13px;color:var(--muted);margin-top:5px;overflow-wrap:anywhere}.price{color:var(--green-dark);font-size:16px;font-weight:850;margin-top:7px}.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.pill{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:750;background:#edf2ee;color:#40574a}.pill.live{background:#e2f4e6;color:#176335}.pill.draft{background:#fff2d4;color:#76540b}.pill.no-pdf{background:#fce9e9;color:#932d32}.product-actions{margin-top:13px;display:flex;gap:7px;flex-wrap:wrap}.upload-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid #edf0ec}.upload-row input{flex:1;min-width:190px}.empty{padding:26px 14px;text-align:center;border:1px dashed #cbd6cc;border-radius:14px;color:var(--muted)}footer{text-align:center;padding:0 16px 30px;color:var(--muted);font-size:12px}
+    @media(max-width:820px){.layout{grid-template-columns:1fr}.auth-row{grid-template-columns:1fr 1fr}.auth-row .field{grid-column:1/-1}.stats{gap:8px}.stat{padding:13px}.stat strong{font-size:24px}}
+    @media(max-width:500px){.wrap{width:min(100% - 22px,1120px)}header{padding:22px 0 26px}.brand-mark{width:42px;height:42px}.auth-row{grid-template-columns:1fr}.auth-row .field{grid-column:auto}.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}.panel{padding:15px}.filters{grid-template-columns:1fr}.list-head{flex-direction:column}.product{padding:12px}.button-row button{flex:1}}
   </style>
 </head>
 <body>
-  <h1>Painel de apostilas</h1>
-  
-<hr>
-<h2>Enviar PDF para uma apostila</h2>
+<header>
+  <div class="wrap">
+    <div class="brand-row">
+      <div class="brand"><div class="brand-mark" aria-hidden="true">📚</div><div><div class="eyebrow">Apostilas da Patrícia Naiane</div><h1>Painel administrativo</h1></div></div>
+      <a href="/" style="color:white;font-weight:700;text-decoration:none" target="_blank" rel="noopener">Ver loja ↗</a>
+    </div>
+    <p>Cadastre, atualize, organize e publique seus materiais digitais em um só lugar.</p>
+  </div>
+</header>
+<main class="wrap">
+  <div class="notice"><div aria-hidden="true">🔐</div><div><strong>Acesso protegido</strong><span>O token é usado somente nesta página e fica apenas na memória da aba. Não o salve no GitHub nem o compartilhe.</span></div></div>
 
-<label for="upload-id">ID da apostila</label>
-<input id="upload-id" placeholder="Cole o ID da apostila" required>
+  <section class="auth-card" aria-labelledby="auth-title">
+    <div class="auth-row">
+      <div class="field"><label id="auth-title" for="admin-token">Token administrativo</label><input id="admin-token" type="password" autocomplete="off" placeholder="Cole o ADMIN_TOKEN aqui" /></div>
+      <button class="btn-primary" id="load-button" type="button">Conectar e carregar</button>
+      <button class="btn-secondary" id="clear-token" type="button">Limpar token</button>
+    </div>
+    <p id="connection-status" class="status" role="status">Informe seu token administrativo para carregar as apostilas.</p>
+  </section>
 
-<label for="upload-token">Token administrativo</label>
-<input id="upload-token" type="password"
-       autocomplete="off" placeholder="Seu token administrativo" required>
+  <section class="stats" aria-label="Resumo de apostilas">
+    <div class="stat"><span>Total de apostilas</span><strong id="count-total">—</strong></div>
+    <div class="stat"><span>Publicadas</span><strong id="count-live">—</strong></div>
+    <div class="stat"><span>Rascunhos</span><strong id="count-draft">—</strong></div>
+  </section>
 
-<label for="upload-pdf">Arquivo PDF</label>
-<input id="upload-pdf" type="file" accept="application/pdf,.pdf" required>
+  <div class="layout">
+    <section class="panel" aria-labelledby="form-title">
+      <h2 id="form-title">Cadastrar apostila</h2>
+      <p class="panel-intro" id="form-intro">A nova apostila ficará como rascunho até você enviar o PDF e publicá-la.</p>
+      <form id="product-form" class="form-grid">
+        <input id="edit-id" type="hidden" />
+        <div class="field"><label for="title">Nome da apostila *</label><input id="title" maxlength="180" required placeholder="Ex.: Noções de Direito Administrativo" /></div>
+        <div class="field"><label for="description">Descrição</label><textarea id="description" rows="4" maxlength="10000" placeholder="Explique o conteúdo e para quem é indicado."></textarea></div>
+        <div class="field"><label for="price">Preço em reais *</label><input id="price" inputmode="decimal" required placeholder="19,90" /></div>
+        <div class="field"><label for="cover">Link HTTPS da capa (opcional)</label><input id="cover" type="url" placeholder="https://..." /></div>
+        <div class="form-actions"><button class="btn-primary" id="save-button" type="submit">Cadastrar rascunho</button><button class="btn-secondary hidden" id="cancel-edit" type="button">Cancelar edição</button></div>
+      </form>
+      <p id="form-status" class="status" role="status"></p>
+    </section>
 
-<button id="upload-button" type="button">Enviar PDF</button>
-<p id="upload-status" role="status"></p>
-  
-  <hr>
-  <h2>Publicar uma apostila cadastrada</h2>
-  <p>Informe o ID recebido após cadastrar a apostila.</p>
+    <section class="panel" aria-labelledby="list-title">
+      <div class="list-head"><div><h2 id="list-title">Suas apostilas</h2><p class="panel-intro">Edite detalhes, envie PDFs e controle a publicação.</p></div><button class="btn-secondary btn-small" type="button" id="refresh-button">↻ Atualizar</button></div>
+      <div class="filters"><input id="search-products" type="search" placeholder="Buscar por nome ou descrição" aria-label="Buscar apostilas" /><select id="status-filter" aria-label="Filtrar por situação"><option value="all">Todas as situações</option><option value="published">Publicadas</option><option value="draft">Rascunhos</option><option value="missing-pdf">Sem PDF</option></select></div>
+      <div id="products-list" class="products"><div class="empty">Conecte com seu token para carregar as apostilas.</div></div>
+      <p id="list-status" class="status" role="status"></p>
+    </section>
+  </div>
+</main>
+<footer>Área administrativa privada · Não compartilhe seu token</footer>
+<script>
+(() => {
+  "use strict";
+  const API = "https://apostilas-patricia-api.apostilaspatricia8.workers.dev";
+  const $ = selector => document.querySelector(selector);
+  const tokenInput = $("#admin-token");
+  const listNode = $("#products-list");
+  const form = $("#product-form");
+  let products = [];
+  let busy = false;
 
-  <label for="publish-id">ID da apostila</label>
-  <input id="publish-id" placeholder="Cole aqui o ID da apostila">
-
-  <label for="publish-token">Token administrativo</label>
-  <input id="publish-token" type="password" autocomplete="off"
-         placeholder="Seu token administrativo">
-
-  <button id="publish-button" type="button">
-    Publicar apostila
-  </button>
-
-  <p id="publish-status" role="status"></p>
-  <p class="aviso">
-    Área administrativa. Não compartilhe seu token.
-    O cadastro ficará como rascunho e ainda não aparecerá na loja.
-  </p>
-
-  <form id="product-form">
-    <label for="token">Token administrativo</label>
-    <input id="token" type="password" autocomplete="off" required>
-
-    <label for="title">Nome da apostila</label>
-    <input id="title" maxlength="180" required>
-
-    <label for="description">Descrição</label>
-    <textarea id="description" rows="4"></textarea>
-
-    <label for="price">Preço em reais (ex.: 19,90)</label>
-    <input id="price" inputmode="decimal" placeholder="19,90" required>
-
-    <label for="cover">Link HTTPS da capa (opcional)</label>
-    <input id="cover" type="url" placeholder="https://...">
-
-    <button type="submit">Cadastrar rascunho</button>
-  </form>
-
-  <p id="status" role="status"></p>
-
-  <script>
-    const API = "https://apostilas-patricia-api.apostilaspatricia8.workers.dev";
-    const form = document.querySelector("#product-form");
-    const status = document.querySelector("#status");
-
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      status.textContent = "Cadastrando...";
-
-      const token = document.querySelector("#token").value;
-      const title = document.querySelector("#title").value.trim();
-      const description = document.querySelector("#description").value.trim();
-      const priceText = document.querySelector("#price").value.trim();
-      const cover = document.querySelector("#cover").value.trim();
-      const normalizedPrice = priceText.replace(",", ".");
-      const price = Number(normalizedPrice);
-
-      if (!Number.isFinite(price) || price < 0 || !/^\d+(\.\d{1,2})?$/.test(normalizedPrice)) {
-        status.textContent = "Digite um preço válido, como 19,90.";
-        return;
-      }
-
-      try {
-        const response = await fetch(`${API}/api/admin/products`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            title,
-            description,
-            price_cents: Math.round(price * 100),
-            cover_url: cover || null
-          })
+  function token() { return tokenInput.value.trim(); }
+  function setStatus(node, message, isError = false) {
+    node.textContent = message || "";
+    node.classList.toggle("error", Boolean(isError));
+    node.classList.toggle("ok", Boolean(message) && !isError);
+  }
+  function money(cents) {
+    return (Number(cents || 0) / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  }
+  async function api(path, options = {}) {
+    if (!token()) throw new Error("Informe o token administrativo.");
+    const headers = new Headers(options.headers || {});
+    headers.set("Authorization", `Bearer ${token()}`);
+    if (options.body && !(options.body instanceof FormData) && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
+    const response = await fetch(`${API}${path}`, { ...options, headers });
+    let data;
+    try { data = await response.json(); } catch { data = {}; }
+    if (!response.ok) {
+      const reason = response.status === 401 ? "Token inválido ou não configurado." : (data.error || `Erro HTTP ${response.status}`);
+      throw new Error(reason);
+    }
+    return data;
+  }
+  function make(tag, className, text) {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    if (text !== undefined && text !== null) element.textContent = String(text);
+    return element;
+  }
+  function resetForm() {
+    form.reset();
+    $("#edit-id").value = "";
+    $("#form-title").textContent = "Cadastrar apostila";
+    $("#form-intro").textContent = "A nova apostila ficará como rascunho até você enviar o PDF e publicá-la.";
+    $("#save-button").textContent = "Cadastrar rascunho";
+    $("#cancel-edit").classList.add("hidden");
+  }
+  function beginEdit(product) {
+    $("#edit-id").value = product.id;
+    $("#title").value = product.title || "";
+    $("#description").value = product.description || "";
+    $("#price").value = (Number(product.price_cents) / 100).toFixed(2).replace(".", ",");
+    $("#cover").value = product.cover_url || "";
+    $("#form-title").textContent = "Editar apostila";
+    $("#form-intro").textContent = "As alterações de preço não alteram os valores já registrados em pedidos anteriores.";
+    $("#save-button").textContent = "Salvar alterações";
+    $("#cancel-edit").classList.remove("hidden");
+    setStatus($("#form-status"), "Editando: " + product.title);
+    form.scrollIntoView({ behavior: "smooth", block: "start" });
+    $("#title").focus();
+  }
+  function makeButton(label, className, handler) {
+    const button = make("button", className, label);
+    button.type = "button";
+    button.addEventListener("click", handler);
+    return button;
+  }
+  async function runAction(statusNode, message, action) {
+    if (busy) return;
+    busy = true;
+    setStatus(statusNode, message);
+    try {
+      await action();
+      setStatus(statusNode, "Concluído.");
+      await loadProducts(false);
+    } catch (error) {
+      setStatus(statusNode, error.message || "Não foi possível concluir a operação.", true);
+    } finally { busy = false; }
+  }
+  function renderProducts() {
+    const term = $("#search-products").value.trim().toLocaleLowerCase("pt-BR");
+    const filter = $("#status-filter").value;
+    const shown = products.filter(product => {
+      const searchable = `${product.title || ""} ${product.description || ""}`.toLocaleLowerCase("pt-BR");
+      const textMatches = searchable.includes(term);
+      const live = Number(product.is_published) === 1;
+      const hasPdf = Number(product.has_pdf) === 1;
+      return textMatches && (filter === "all" || (filter === "published" && live) || (filter === "draft" && !live) || (filter === "missing-pdf" && !hasPdf));
+    });
+    listNode.replaceChildren();
+    if (!shown.length) {
+      listNode.append(make("div", "empty", products.length ? "Nenhuma apostila corresponde ao filtro." : "Nenhuma apostila cadastrada ainda."));
+      return;
+    }
+    for (const product of shown) {
+      const card = make("article", "product");
+      const top = make("div", "product-top");
+      const cover = make("div", "cover");
+      if (product.cover_url) {
+        const img = document.createElement("img");
+        img.src = product.cover_url;
+        img.alt = "Capa de " + product.title;
+        img.loading = "lazy";
+        img.onerror = () => { cover.replaceChildren(make("span", "", "📘")); };
+        cover.append(img);
+      } else cover.append(make("span", "", "📘"));
+      const main = make("div", "product-main");
+      main.append(make("div", "product-title", product.title), make("div", "product-meta", `ID: ${product.id}`), make("div", "price", money(product.price_cents)));
+      const pills = make("div", "pills");
+      const live = Number(product.is_published) === 1;
+      const hasPdf = Number(product.has_pdf) === 1;
+      pills.append(make("span", `pill ${live ? "live" : "draft"}`, live ? "Publicada" : "Rascunho"));
+      pills.append(make("span", `pill ${hasPdf ? "live" : "no-pdf"}`, hasPdf ? "PDF enviado" : "Sem PDF"));
+      main.append(pills);
+      top.append(cover, main);
+      card.append(top);
+      if (product.description) card.append(make("p", "product-meta", product.description));
+      const actions = make("div", "product-actions");
+      actions.append(makeButton("Editar", "btn-secondary btn-small", () => beginEdit(product)));
+      if (live) {
+        actions.append(makeButton("Despublicar", "btn-secondary btn-small", () => {
+          if (!confirm(`Despublicar “${product.title}”? Ela deixará de aparecer na loja, mas os registros e downloads de pedidos pagos serão preservados.`)) return;
+          runAction($("#list-status"), "Despublicando...", async () => {
+            await api("/api/admin/products/unpublish", { method: "POST", body: JSON.stringify({ id: product.id }) });
+          });
+        }));
+      } else {
+        const publish = makeButton("Publicar", "btn-primary btn-small", () => {
+          if (!hasPdf) { setStatus($("#list-status"), "Envie o PDF antes de publicar esta apostila.", true); return; }
+          if (!confirm(`Publicar “${product.title}” na loja?`)) return;
+          runAction($("#list-status"), "Publicando...", async () => {
+            await api("/api/admin/products/publish", { method: "POST", body: JSON.stringify({ id: product.id }) });
+          });
         });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          throw new Error(
-            response.status === 401
-              ? "Token inválido ou não configurado."
-              : result.error || `Erro HTTP ${response.status}`
-          );
-        }
-
-        status.textContent =
-          `Rascunho cadastrado!\nID: ${result.id}\nAinda não está publicado na loja.`;
-        form.reset();
-      } catch (error) {
-        status.textContent = `Não foi possível cadastrar: ${error.message}`;
+        if (!hasPdf) publish.title = "Envie o PDF antes de publicar";
+        actions.append(publish);
+        actions.append(makeButton("Excluir", "btn-danger btn-small", () => {
+          if (!confirm(`Excluir “${product.title}”? Só será possível excluir rascunhos sem histórico de pedidos.`)) return;
+          runAction($("#list-status"), "Excluindo...", async () => {
+            await api(`/api/admin/products/${encodeURIComponent(product.id)}`, { method: "DELETE" });
+          });
+        }));
       }
-    });
-
-  async function publishProduct(id, token) {
-    const response = await fetch(`${API}/api/admin/products/publish`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({ id })
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.error || `Erro HTTP ${response.status}`);
+      card.append(actions);
+      const upload = make("div", "upload-row");
+      const input = document.createElement("input");
+      input.type = "file"; input.accept = "application/pdf,.pdf"; input.setAttribute("aria-label", `Selecionar PDF para ${product.title}`);
+      const uploadStatus = make("span", "helper", "PDF até 25 MB");
+      const uploadBtn = makeButton(hasPdf ? "Substituir PDF" : "Enviar PDF", "btn-secondary btn-small", async () => {
+        const file = input.files && input.files[0];
+        if (!file) { uploadStatus.textContent = "Selecione um arquivo PDF."; return; }
+        if (file.size > 25 * 1024 * 1024) { uploadStatus.textContent = "O PDF deve ter no máximo 25 MB."; return; }
+        if (file.type !== "application/pdf" || !file.name.toLowerCase().endsWith(".pdf")) { uploadStatus.textContent = "Selecione um arquivo PDF válido."; return; }
+        uploadBtn.disabled = true; uploadStatus.textContent = "Enviando...";
+        const data = new FormData(); data.append("id", product.id); data.append("pdf", file);
+        try {
+          await api("/api/admin/products/upload", { method: "POST", body: data });
+          uploadStatus.textContent = "PDF enviado.";
+          await loadProducts(false);
+        } catch (error) { uploadStatus.textContent = error.message || "Falha no envio."; }
+        finally { uploadBtn.disabled = false; }
+      });
+      upload.append(input, uploadBtn);
+      card.append(upload, uploadStatus);
+      listNode.append(card);
     }
-
-    return result;
   }
-    
-document.querySelector("#publish-button").addEventListener("click", async () => {
-  const id = document.querySelector("#publish-id").value.trim();
-  const token = document.querySelector("#publish-token").value;
-  const status = document.querySelector("#publish-status");
-
-  if (!id || !token) {
-    status.textContent = "Informe o ID da apostila e o token.";
-    return;
-  }
-
-  status.textContent = "Publicando...";
-
-  try {
-    await publishProduct(id, token);
-    status.textContent = "Apostila publicada com sucesso!";
-    document.querySelector("#publish-token").value = "";
-  } catch (error) {
-    status.textContent = `Erro: ${error.message}`;
-  }
-});
- 
-document.querySelector("#upload-button").addEventListener("click", async () => {
-  const id = document.querySelector("#upload-id").value.trim();
-  const token = document.querySelector("#upload-token").value;
-  const file = document.querySelector("#upload-pdf").files[0];
-  const status = document.querySelector("#upload-status");
-
-  if (!id || !token || !file) {
-    status.textContent = "Informe o ID, o token e selecione um PDF.";
-    return;
-  }
-
-  if (file.type !== "application/pdf" || !file.name.toLowerCase().endsWith(".pdf")) {
-    status.textContent = "Selecione um arquivo PDF válido.";
-    return;
-  }
-
-  if (file.size > 25 * 1024 * 1024) {
-    status.textContent = "O PDF deve ter no máximo 25 MB.";
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("id", id);
-  formData.append("pdf", file);
-
-  status.textContent = "Enviando PDF...";
-
-  try {
-    const response = await fetch(`${API}/api/admin/products/upload`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`
-      },
-      body: formData
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.error || `Erro HTTP ${response.status}`);
+  async function loadProducts(showConnection = true) {
+    if (!token()) {
+      setStatus($("#connection-status"), "Informe seu token administrativo para carregar as apostilas.", true);
+      return;
     }
-
-    status.textContent = "PDF enviado e associado à apostila com sucesso!";
-    document.querySelector("#upload-token").value = "";
-    document.querySelector("#upload-pdf").value = "";
-  } catch (error) {
-    status.textContent = `Falha no envio: ${error.message}`;
+    if (showConnection) setStatus($("#connection-status"), "Conectando à API...");
+    $("#load-button").disabled = true;
+    $("#refresh-button").disabled = true;
+    try {
+      const data = await api("/api/admin/products", { headers: { Accept: "application/json" } });
+      products = Array.isArray(data.products) ? data.products : [];
+      $("#count-total").textContent = products.length;
+      $("#count-live").textContent = products.filter(p => Number(p.is_published) === 1).length;
+      $("#count-draft").textContent = products.filter(p => Number(p.is_published) !== 1).length;
+      renderProducts();
+      setStatus($("#connection-status"), "Conectado. Apostilas carregadas com sucesso.");
+      if (showConnection) setStatus($("#list-status"), `${products.length} apostila(s) carregada(s).`);
+    } catch (error) {
+      products = []; renderProducts();
+      setStatus($("#connection-status"), error.message || "Falha ao conectar à API.", true);
+    } finally {
+      $("#load-button").disabled = false;
+      $("#refresh-button").disabled = false;
+    }
   }
-});
-  </script>
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const title = $("#title").value.trim();
+    const description = $("#description").value.trim();
+    const priceText = $("#price").value.trim().replace(",", ".");
+    const price = Number(priceText);
+    const cover = $("#cover").value.trim();
+    if (!/^\d+(\.\d{1,2})?$/.test(priceText) || !Number.isFinite(price) || price < 0) {
+      setStatus($("#form-status"), "Digite um preço válido, como 19,90.", true); return;
+    }
+    if (cover && !/^https:\/\//i.test(cover)) {
+      setStatus($("#form-status"), "O link da capa deve começar com https://.", true); return;
+    }
+    const editId = $("#edit-id").value;
+    const payload = { title, description, price_cents: Math.round(price * 100), cover_url: cover || null };
+    $("#save-button").disabled = true;
+    setStatus($("#form-status"), editId ? "Salvando alterações..." : "Cadastrando rascunho...");
+    try {
+      if (editId) {
+        await api(`/api/admin/products/${encodeURIComponent(editId)}`, { method: "PATCH", body: JSON.stringify(payload) });
+        setStatus($("#form-status"), "Apostila atualizada.");
+      } else {
+        const data = await api("/api/admin/products", { method: "POST", body: JSON.stringify(payload) });
+        setStatus($("#form-status"), `Rascunho cadastrado. ID: ${data.id}`);
+      }
+      resetForm(); await loadProducts(false);
+    } catch (error) { setStatus($("#form-status"), error.message || "Não foi possível salvar.", true); }
+    finally { $("#save-button").disabled = false; }
+  });
+  $("#load-button").addEventListener("click", () => loadProducts(true));
+  $("#refresh-button").addEventListener("click", () => loadProducts(true));
+  $("#clear-token").addEventListener("click", () => {
+    tokenInput.value = ""; products = []; listNode.replaceChildren(make("div", "empty", "Conecte com seu token para carregar as apostilas."));
+    $("#count-total").textContent = $("#count-live").textContent = $("#count-draft").textContent = "—";
+    setStatus($("#connection-status"), "Token limpo. Informe o token para conectar.");
+  });
+  $("#cancel-edit").addEventListener("click", resetForm);
+  $("#search-products").addEventListener("input", renderProducts);
+  $("#status-filter").addEventListener("change", renderProducts);
+  tokenInput.addEventListener("keydown", event => { if (event.key === "Enter") loadProducts(true); });
+})();
+</script>
 </body>
 </html>

@@ -158,6 +158,43 @@ select { height: 41px; border: 1px solid var(--line); border-radius: 8px; backgr
   .faq { display: block; }.faq-heading { margin-bottom: 20px; }
   .site-footer { padding-left: 18px; padding-right: 18px; }
 }
+
+/* Interface de pagamento Pix adicionada à etapa do pedido */
+.payment-area {
+  display: grid;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+}
+.payment-area h4 { margin: 0; color: var(--green); font-size: 18px; }
+.payment-area p { margin: 0; line-height: 1.6; }
+.payment-area .pix-qr {
+  display: block;
+  width: min(100%, 300px);
+  max-height: 300px;
+  object-fit: contain;
+  margin: 4px auto;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+.payment-area label { display: grid; gap: 7px; font-weight: 700; color: var(--green); }
+.payment-area textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #c9d2cc;
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px;
+  font: 12px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace;
+  resize: vertical;
+  overflow-wrap: anywhere;
+}
+.purchase-form .payment-area button { width: 100%; min-height: 44px; }
+
 /* Estado de carregamento e mensagens do catálogo */
 #product-grid > p {
   grid-column: 1 / -1;
@@ -165,19 +202,12 @@ select { height: 41px; border: 1px solid var(--line); border-radius: 8px; backgr
   text-align: center;
   padding: 28px 16px;
 }
-
 .product-button:disabled {
   opacity: 0.65;
   cursor: not-allowed;
 }
-
-.product-card .cover-title {
-  overflow-wrap: anywhere;
-}
-
-[hidden] {
-  display: none !important;
-}
+.product-card .cover-title { overflow-wrap: anywhere; }
+[hidden] { display: none !important; }
 
 /* Formulário de pedido */
 .purchase-form {
@@ -194,19 +224,14 @@ select { height: 41px; border: 1px solid var(--line); border-radius: 8px; backgr
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(23, 59, 50, 0.08);
 }
-
 .purchase-form h3,
-.purchase-form p {
-  margin: 0;
-}
-
+.purchase-form p { margin: 0; }
 .purchase-form label {
   display: grid;
   gap: 7px;
   font-weight: 600;
   color: #173b32;
 }
-
 .purchase-form input {
   box-sizing: border-box;
   width: 100%;
@@ -217,12 +242,7 @@ select { height: 41px; border: 1px solid var(--line); border-radius: 8px; backgr
   font: inherit;
   background: #fff;
 }
-
-.purchase-form input:focus {
-  outline: 2px solid #477c68;
-  outline-offset: 2px;
-}
-
+.purchase-form input:focus { outline: 2px solid #477c68; outline-offset: 2px; }
 .purchase-form button {
   box-sizing: border-box;
   width: 100%;
@@ -231,13 +251,7 @@ select { height: 41px; border: 1px solid var(--line); border-radius: 8px; backgr
   border-radius: 8px;
   cursor: pointer;
 }
-
-.purchase-form p {
-  line-height: 1.5;
-  color: #5d665f;
-  font-size: 0.92rem;
-}
-
+.purchase-form p { line-height: 1.5; color: #5d665f; font-size: 0.92rem; }
 .purchase-message {
   margin: 16px 0;
   padding: 14px 16px;
@@ -246,3 +260,38 @@ select { height: 41px; border: 1px solid var(--line); border-radius: 8px; backgr
   line-height: 1.5;
 }
 
+/* Interface de pagamento Pix adicionada à etapa do pedido */
+.payment-area {
+  display: grid;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+}
+.payment-area h4 { margin: 0; color: var(--green); font-size: 18px; }
+.payment-area p { margin: 0; line-height: 1.6; }
+.payment-area .pix-qr {
+  display: block;
+  width: min(100%, 300px);
+  max-height: 300px;
+  object-fit: contain;
+  margin: 4px auto;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+.payment-area label { display: grid; gap: 7px; font-weight: 700; color: var(--green); }
+.payment-area textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #c9d2cc;
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px;
+  font: 12px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace;
+  resize: vertical;
+  overflow-wrap: anywhere;
+}
+.purchase-form .payment-area button { width: 100%; min-height: 44px; }
