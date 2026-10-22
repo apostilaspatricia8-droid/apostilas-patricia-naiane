@@ -18,6 +18,8 @@
     .list-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:16px}.list-head .panel-intro{margin-bottom:0}.filters{display:grid;grid-template-columns:minmax(0,1fr) 170px;gap:10px;margin-bottom:14px}.products{display:grid;gap:12px}.product{border:1px solid var(--line);border-radius:14px;padding:15px;background:#fff}.product-top{display:flex;gap:13px;align-items:flex-start}.cover{width:60px;height:76px;border-radius:9px;background:linear-gradient(155deg,#2f7953,#17412e);color:white;display:grid;place-items:center;flex:0 0 60px;overflow:hidden}.cover img{width:100%;height:100%;object-fit:cover}.cover span{font-size:21px;font-weight:800}.product-main{min-width:0;flex:1}.product-title{font-weight:800;line-height:1.25;overflow-wrap:anywhere}.product-meta{font-size:13px;color:var(--muted);margin-top:5px;overflow-wrap:anywhere}.price{color:var(--green-dark);font-size:16px;font-weight:850;margin-top:7px}.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.pill{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:750;background:#edf2ee;color:#40574a}.pill.live{background:#e2f4e6;color:#176335}.pill.draft{background:#fff2d4;color:#76540b}.pill.no-pdf{background:#fce9e9;color:#932d32}.product-actions{margin-top:13px;display:flex;gap:7px;flex-wrap:wrap}.upload-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid #edf0ec}.upload-row input{flex:1;min-width:190px}.empty{padding:26px 14px;text-align:center;border:1px dashed #cbd6cc;border-radius:14px;color:var(--muted)}footer{text-align:center;padding:0 16px 30px;color:var(--muted);font-size:12px}
     @media(max-width:820px){.layout{grid-template-columns:1fr}.auth-row{grid-template-columns:1fr 1fr}.auth-row .field{grid-column:1/-1}.stats{gap:8px}.stat{padding:13px}.stat strong{font-size:24px}}
     @media(max-width:500px){.wrap{width:min(100% - 22px,1120px)}header{padding:22px 0 26px}.brand-mark{width:42px;height:42px}.auth-row{grid-template-columns:1fr}.auth-row .field{grid-column:auto}.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}.panel{padding:15px}.filters{grid-template-columns:1fr}.list-head{flex-direction:column}.product{padding:12px}.button-row button{flex:1}}
+
+    .manual-sections{display:grid;grid-template-columns:minmax(280px,.85fr) minmax(0,1.15fr);gap:20px;margin-bottom:20px;align-items:start}.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.checkbox-row{display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fbfcfa}.checkbox-row input{width:auto;flex:0 0 auto;margin-top:5px}.checkbox-row label{font-weight:750}.pix-order{border:1px solid var(--line);border-radius:14px;padding:15px;background:#fff;margin-bottom:12px}.pix-order-title{font-weight:850;font-size:16px}.pix-order-meta{font-size:13px;color:var(--muted);overflow-wrap:anywhere;margin-top:5px}.pix-order-price{font-size:19px;font-weight:850;color:var(--green-dark);margin:8px 0}.confirm-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:12px}.confirm-check{display:flex;gap:9px;align-items:flex-start;grid-column:1/-1;font-size:13px;color:#425246}.confirm-check input{width:auto;flex:0 0 auto;margin-top:4px}.bank-hint{background:#f0f6ef;border-radius:12px;padding:12px;color:#335541;font-size:13px;margin:12px 0}.pix-order button{margin-top:8px}@media(max-width:820px){.manual-sections{grid-template-columns:1fr}}@media(max-width:500px){.settings-grid,.confirm-grid{grid-template-columns:1fr}.confirm-check{grid-column:auto}}
   </style>
 </head>
 <body>
@@ -41,6 +43,32 @@
     </div>
     <p id="connection-status" class="status" role="status">Informe seu token administrativo para carregar as apostilas.</p>
   </section>
+
+  <div class="manual-sections">
+    <section class="panel" aria-labelledby="pix-settings-title">
+      <h2 id="pix-settings-title">Recebimento por Pix</h2>
+      <p class="panel-intro">Cadastre ou troque a chave Pix que será exibida aos compradores. Você pode usar a chave do Banco do Brasil ou do Nubank.</p>
+      <div class="bank-hint">A chave Pix é exibida publicamente para permitir o pagamento. Nunca informe senha bancária, código de segurança ou token neste painel. Se trocar do Banco do Brasil para o Nubank (ou vice-versa), confira também os dois extratos enquanto houver pedidos antigos pendentes, pois alguns compradores podem ainda estar vendo a chave anterior.</div>
+      <form id="pix-settings-form" class="form-grid">
+        <div class="checkbox-row"><input id="pix-enabled" type="checkbox"><label for="pix-enabled">Aceitar pedidos por Pix com esta configuração</label></div>
+        <div class="settings-grid">
+          <div class="field"><label for="pix-bank">Banco recebedor *</label><select id="pix-bank" required><option value="Banco do Brasil">Banco do Brasil</option><option value="Nubank">Nubank</option><option value="Outro">Outro</option></select></div>
+          <div class="field"><label for="pix-key-type">Tipo da chave *</label><select id="pix-key-type" required><option value="cpf">CPF</option><option value="cnpj">CNPJ</option><option value="email">E-mail</option><option value="phone">Telefone</option><option value="random">Chave aleatória</option></select></div>
+        </div>
+        <div class="field"><label for="pix-holder">Nome do titular *</label><input id="pix-holder" maxlength="120" autocomplete="off" placeholder="Nome que aparece no banco"></div>
+        <div class="field"><label for="pix-key">Chave Pix *</label><input id="pix-key" maxlength="200" autocomplete="off" placeholder="Digite a chave Pix" /></div>
+        <div class="field"><label for="pix-instructions">Instruções para o comprador (opcional)</label><textarea id="pix-instructions" rows="3" maxlength="500" placeholder="Ex.: Informe o número do pedido na descrição, se possível."></textarea></div>
+        <div class="form-actions"><button class="btn-primary" id="save-pix-settings" type="submit">Salvar configuração Pix</button><button class="btn-secondary" id="reload-pix-settings" type="button">Recarregar</button></div>
+      </form>
+      <p id="pix-settings-status" class="status" role="status"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="pending-orders-title">
+      <div class="list-head"><div><h2 id="pending-orders-title">Pedidos aguardando Pix</h2><p class="panel-intro">Confirme somente depois de conferir o crédito real no aplicativo do Banco do Brasil ou Nubank. Comprovante enviado pelo comprador não é suficiente.</p></div><button class="btn-secondary btn-small" id="refresh-orders" type="button">↻ Atualizar</button></div>
+      <div id="pending-orders-list"><div class="empty">Conecte com seu token administrativo para consultar os pedidos.</div></div>
+      <p id="pending-orders-status" class="status" role="status"></p>
+    </section>
+  </div>
 
   <section class="stats" aria-label="Resumo de apostilas">
     <div class="stat"><span>Total de apostilas</span><strong id="count-total">—</strong></div>
@@ -257,6 +285,7 @@
       renderProducts();
       setStatus($("#connection-status"), "Conectado. Apostilas carregadas com sucesso.");
       if (showConnection) setStatus($("#list-status"), `${products.length} apostila(s) carregada(s).`);
+      await Promise.all([loadPixSettings(), loadPendingOrders()]);
     } catch (error) {
       products = []; renderProducts();
       setStatus($("#connection-status"), error.message || "Falha ao conectar à API.", true);
@@ -265,6 +294,130 @@
       $("#refresh-button").disabled = false;
     }
   }
+
+  function parseMoneyToCents(text) {
+    let normalized = String(text || "").trim().replace(/\s/g, "");
+    if (normalized.includes(",")) normalized = normalized.replace(/\./g, "").replace(",", ".");
+    if (!/^\d+(\.\d{1,2})?$/.test(normalized)) return NaN;
+    return Math.round(Number(normalized) * 100);
+  }
+
+  async function loadPixSettings() {
+    if (!token()) return;
+    setStatus($("#pix-settings-status"), "Carregando configuração Pix...");
+    try {
+      const data = await api("/api/admin/payment-settings");
+      const cfg = data.settings || {};
+      $("#pix-enabled").checked = Number(cfg.pix_enabled) === 1;
+      $("#pix-bank").value = cfg.pix_bank || "Banco do Brasil";
+      $("#pix-key-type").value = cfg.pix_key_type || "random";
+      $("#pix-holder").value = cfg.pix_holder || "";
+      $("#pix-key").value = cfg.pix_key || "";
+      $("#pix-instructions").value = cfg.pix_instructions || "";
+      setStatus($("#pix-settings-status"), Number(cfg.pix_enabled) === 1 ? "Pix manual ativo. A chave configurada será mostrada em novos pedidos." : "Pix ainda desativado. Preencha os dados e marque a opção para ativar.");
+    } catch (error) {
+      setStatus($("#pix-settings-status"), error.message || "Não foi possível carregar a configuração Pix.", true);
+    }
+  }
+
+  async function loadPendingOrders() {
+    if (!token()) return;
+    setStatus($("#pending-orders-status"), "Carregando pedidos pendentes...");
+    $("#refresh-orders").disabled = true;
+    try {
+      const data = await api("/api/admin/orders", { headers: { Accept: "application/json" } });
+      renderPendingOrders(Array.isArray(data.orders) ? data.orders : []);
+      setStatus($("#pending-orders-status"), `${(data.orders || []).length} pedido(s) aguardando confirmação manual.`);
+    } catch (error) {
+      $("#pending-orders-list").replaceChildren(make("div", "empty", error.message || "Não foi possível carregar pedidos."));
+      setStatus($("#pending-orders-status"), error.message || "Não foi possível carregar pedidos.", true);
+    } finally {
+      $("#refresh-orders").disabled = false;
+    }
+  }
+
+  function renderPendingOrders(orders) {
+    const node = $("#pending-orders-list");
+    node.replaceChildren();
+    if (!orders.length) {
+      node.append(make("div", "empty", "Nenhum pedido pendente disponível para confirmação manual."));
+      return;
+    }
+    for (const order of orders) {
+      const card = make("article", "pix-order");
+      card.append(make("div", "pix-order-title", order.customer_name || "Cliente"));
+      card.append(make("div", "pix-order-meta", `${order.customer_email || "Sem e-mail"} · ${order.created_at || "Data indisponível"}`));
+      card.append(make("div", "pix-order-meta", `Pedido: ${order.id}`));
+      card.append(make("div", "pix-order-meta", `Apostilas: ${order.products || "Não informadas"}`));
+      card.append(make("div", "pix-order-price", money(order.total_cents)));
+
+      const amountField = make("div", "field");
+      const amountLabel = make("label", "", "Valor confirmado no banco (R$)");
+      const amountInput = make("input");
+      amountInput.inputMode = "decimal";
+      amountInput.value = (Number(order.total_cents) / 100).toFixed(2).replace(".", ",");
+      amountLabel.append(amountInput); amountField.append(amountLabel);
+
+      const refField = make("div", "field");
+      const refLabel = make("label", "", "Referência do extrato (opcional)");
+      const refInput = make("input");
+      refInput.maxLength = 80;
+      refInput.placeholder = "ID/identificador da transação";
+      refLabel.append(refInput); refField.append(refLabel);
+
+      const confirmWrap = make("label", "confirm-check");
+      const confirmCheck = make("input"); confirmCheck.type = "checkbox";
+      confirmWrap.append(confirmCheck, document.createTextNode("Conferi no aplicativo/extrato que o valor entrou na conta e corresponde a este pedido."));
+      const button = makeButton("Confirmar recebimento e liberar PDF", "btn-primary", async () => {
+        if (!confirmCheck.checked) { setStatus($("#pending-orders-status"), "Marque a confirmação após conferir o crédito no banco.", true); return; }
+        const amountCents = parseMoneyToCents(amountInput.value);
+        if (!Number.isSafeInteger(amountCents) || amountCents !== Number(order.total_cents)) {
+          setStatus($("#pending-orders-status"), `O valor informado precisa ser exatamente ${money(order.total_cents)}.`, true); return;
+        }
+        if (!confirm(`Confirma que recebeu ${money(order.total_cents)} na conta bancária para o pedido ${order.id}? O PDF será liberado imediatamente.`)) return;
+        button.disabled = true; button.textContent = "Confirmando...";
+        try {
+          await api("/api/admin/orders/confirm-pix", {
+            method: "POST",
+            body: JSON.stringify({ order_id: order.id, confirmed_amount_cents: amountCents, confirm_received: true, reference: refInput.value.trim() })
+          });
+          setStatus($("#pending-orders-status"), `Pedido ${order.id} confirmado. O download agora está liberado.`);
+          await loadPendingOrders();
+        } catch (error) {
+          button.disabled = false; button.textContent = "Confirmar recebimento e liberar PDF";
+          setStatus($("#pending-orders-status"), error.message || "Não foi possível confirmar.", true);
+        }
+      });
+      const confirmGrid = make("div", "confirm-grid");
+      confirmGrid.append(amountField, refField, confirmWrap, button);
+      card.append(confirmGrid);
+      node.append(card);
+    }
+  }
+
+  $("#pix-settings-form").addEventListener("submit", async event => {
+    event.preventDefault();
+    const payload = {
+      enabled: $("#pix-enabled").checked,
+      pix_bank: $("#pix-bank").value,
+      pix_key_type: $("#pix-key-type").value,
+      pix_holder: $("#pix-holder").value.trim(),
+      pix_key: $("#pix-key").value.trim(),
+      pix_instructions: $("#pix-instructions").value.trim()
+    };
+    $("#save-pix-settings").disabled = true;
+    setStatus($("#pix-settings-status"), "Salvando configuração...");
+    try {
+      const data = await api("/api/admin/payment-settings", { method: "POST", body: JSON.stringify(payload) });
+      setStatus($("#pix-settings-status"), data.message || "Configuração salva.");
+    } catch (error) {
+      setStatus($("#pix-settings-status"), error.message || "Não foi possível salvar.", true);
+    } finally {
+      $("#save-pix-settings").disabled = false;
+    }
+  });
+  $("#reload-pix-settings").addEventListener("click", loadPixSettings);
+  $("#refresh-orders").addEventListener("click", loadPendingOrders);
 
   form.addEventListener("submit", async event => {
     event.preventDefault();
