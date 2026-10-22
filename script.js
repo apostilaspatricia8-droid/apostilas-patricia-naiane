@@ -121,24 +121,14 @@ function openPurchaseForm(product, button) {
       // O token não é enviado a ferramentas de análise nem exibido na tela.
       form.replaceChildren(
         createElement("h3", "", "Pedido registrado!"),
-        createElement(
-          "p",
-          "",
-          "Seu pedido foi registrado, mas ainda não há cobrança ou pagamento disponível."
-        ),
-        createElement(
-          "p",
-          "",
-          `Número do pedido: ${data.order_id}`
-        ),
-        createElement(
-          "p",
-          "",
-          "Guarde o número do pedido. A loja informará quando o pagamento estiver disponível."
-        )
-      );
-
-      if (data.access_token) {
+        
+createElement(
+  "p",
+  "",
+  "Guarde o número do pedido. A loja informará quando o pagamento estiver disponível."
+)
+);
+         if (data.access_token) {
         try {
           sessionStorage.setItem(
             `order:${data.order_id}`,
@@ -148,7 +138,15 @@ function openPurchaseForm(product, button) {
           // A criação do pedido continua válida mesmo se o navegador bloquear armazenamento.
         }
       }
+const checkButton = createElement(
+  "button",
+  "product-button",
+  "Consultar pedido"
+);
+checkButton.type = "button";
+checkButton.addEventListener("click", () => consultarPedido(data.order_id));
 
+form.append(checkButton);
       
     } catch (error) {
       console.error("Erro ao criar pedido:", error);
