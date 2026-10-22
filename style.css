@@ -179,3 +179,70 @@ select { height: 41px; border: 1px solid var(--line); border-radius: 8px; backgr
   display: none !important;
 }
 
+/* Formulário de pedido */
+.purchase-form {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 520px;
+  margin: 24px 0;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  background: #fffdf8;
+  border: 1px solid #e6e3d9;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(23, 59, 50, 0.08);
+}
+
+.purchase-form h3,
+.purchase-form p {
+  margin: 0;
+}
+
+.purchase-form label {
+  display: grid;
+  gap: 7px;
+  font-weight: 600;
+  color: #173b32;
+}
+
+.purchase-form input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid #c9d2cc;
+  border-radius: 8px;
+  font: inherit;
+  background: #fff;
+}
+
+.purchase-form input:focus {
+  outline: 2px solid #477c68;
+  outline-offset: 2px;
+}
+
+.purchase-form button {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.purchase-form p {
+  line-height: 1.5;
+  color: #5d665f;
+  font-size: 0.92rem;
+}
+
+.purchase-message {
+  margin: 16px 0;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #edf5ef;
+  line-height: 1.5;
+}
+
